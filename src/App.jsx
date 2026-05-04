@@ -43,12 +43,14 @@ function GenloopMark() {
 }
 
 const DEFAULTS = {
-  size:      1.0,   // blob scale multiplier
-  blur:      50,    // px
-  drift:     60,    // px — horizontal travel per cycle
-  yOffset:   40,    // px — vertical travel per cycle
-  speed:     26,    // s — base animation duration
-  intensity: 0.97,  // white opacity at the gradient core
+  size:        1.0,
+  blur:        50,
+  drift:       60,
+  yOffset:     40,
+  speed:       26,
+  intensity:   0.97,
+  noise:       0.03,   // matches Figma opacity-3 (3%)
+  noiseSize:   1024,   // px tile — matches Figma bg-size-[1024px_1024px]
 }
 
 function Slider({ label, value, min, max, step, unit, onChange }) {
@@ -83,6 +85,8 @@ export default function App() {
     '--blob-y-offset':  `${c.yOffset}px`,
     '--blob-speed':     `${c.speed}s`,
     '--blob-intensity': c.intensity,
+    '--noise-opacity':  c.noise,
+    '--noise-size':     `${c.noiseSize}px`,
   }
 
   return (
@@ -91,6 +95,8 @@ export default function App() {
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
+      {/* Noise texture overlay */}
+      <div className="noise-layer" aria-hidden="true" />
 
       {/* Navbar */}
       <nav className="navbar">
@@ -162,12 +168,16 @@ export default function App() {
         </div>
         {open && (
           <div className="ctrl-body">
+            <div className="ctrl-section-label">Cloud</div>
             <Slider label="Size"      value={c.size}      min={0.5}  max={3.0}  step={0.05} unit="×"  onChange={v => set('size', v)} />
             <Slider label="Softness"  value={c.blur}      min={5}    max={120}  step={1}    unit="px" onChange={v => set('blur', v)} />
             <Slider label="X Drift"   value={c.drift}     min={10}   max={300}  step={5}    unit="px" onChange={v => set('drift', v)} />
             <Slider label="Y Offset"  value={c.yOffset}   min={10}   max={300}  step={5}    unit="px" onChange={v => set('yOffset', v)} />
             <Slider label="Speed"     value={c.speed}     min={4}    max={80}   step={1}    unit="s"  onChange={v => set('speed', v)} />
             <Slider label="Intensity" value={c.intensity} min={0.3}  max={1.0}  step={0.01} unit=""   onChange={v => set('intensity', v)} />
+            <div className="ctrl-section-label">Noise</div>
+            <Slider label="Opacity"   value={c.noise}     min={0}    max={0.2}  step={0.005} unit=""  onChange={v => set('noise', v)} />
+            <Slider label="Grain"     value={c.noiseSize} min={50}   max={1024} step={50}   unit="px" onChange={v => set('noiseSize', v)} />
           </div>
         )}
       </div>

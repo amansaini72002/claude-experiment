@@ -4,7 +4,7 @@
   width: 100vw;
   height: 100vh;
   min-height: 640px;
-  background: #071530; /* fallback if WebGL unavailable */
+  background: var(--primary); /* fallback if WebGL unavailable */
   overflow: hidden;
   display: flex;
   flex-direction: column;

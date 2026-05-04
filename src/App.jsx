@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 
 function ChevronDown() {
@@ -41,10 +42,50 @@ function GenloopMark() {
   )
 }
 
-export default function App() {
+const DEFAULTS = {
+  size:      1.0,   // blob scale multiplier
+  blur:      35,    // px
+  drift:     90,    // px — how far each blob travels per cycle
+  speed:     26,    // s — base animation duration
+  intensity: 0.97,  // white opacity at the gradient core
+}
+
+function Slider({ label, value, min, max, step, unit, onChange }) {
   return (
-    <main className="hero">
-      {/* Cloud blobs — Approach B: blurred divs, transform-only animation */}
+    <div className="ctrl-row">
+      <span className="ctrl-label">{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={e => onChange(Number(e.target.value))}
+        className="ctrl-slider"
+      />
+      <span className="ctrl-value">{value}{unit}</span>
+    </div>
+  )
+}
+
+export default function App() {
+  const [c, setC] = useState(DEFAULTS)
+  const [open, setOpen] = useState(true)
+
+  const set = (key, val) => setC(prev => ({ ...prev, [key]: val }))
+  const reset = () => setC(DEFAULTS)
+
+  const cssVars = {
+    '--blob-size':      c.size,
+    '--blob-blur':      `${c.blur}px`,
+    '--blob-drift':     `${c.drift}px`,
+    '--blob-speed':     `${c.speed}s`,
+    '--blob-intensity': c.intensity,
+  }
+
+  return (
+    <main className="hero" style={cssVars}>
+      {/* Cloud blobs */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
@@ -104,6 +145,28 @@ export default function App() {
             <span className="laurel right"><Laurel /></span>
           </div>
         </div>
+      </div>
+
+      {/* Live controls */}
+      <div className="ctrl-panel">
+        <div className="ctrl-header">
+          <span className="ctrl-title">Cloud Controls</span>
+          <div className="ctrl-actions">
+            <button className="ctrl-btn" onClick={reset}>Reset</button>
+            <button className="ctrl-btn ctrl-toggle" onClick={() => setOpen(o => !o)}>
+              {open ? '▲' : '▼'}
+            </button>
+          </div>
+        </div>
+        {open && (
+          <div className="ctrl-body">
+            <Slider label="Size"      value={c.size}      min={0.5}  max={3.0}  step={0.05} unit="×"  onChange={v => set('size', v)} />
+            <Slider label="Softness"  value={c.blur}      min={5}    max={120}  step={1}    unit="px" onChange={v => set('blur', v)} />
+            <Slider label="Drift"     value={c.drift}     min={10}   max={300}  step={5}    unit="px" onChange={v => set('drift', v)} />
+            <Slider label="Speed"     value={c.speed}     min={4}    max={80}   step={1}    unit="s"  onChange={v => set('speed', v)} />
+            <Slider label="Intensity" value={c.intensity} min={0.3}  max={1.0}  step={0.01} unit=""   onChange={v => set('intensity', v)} />
+          </div>
+        )}
       </div>
     </main>
   )

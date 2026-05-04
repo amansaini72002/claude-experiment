@@ -80,17 +80,17 @@
 
 @keyframes float1 {
   from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(var(--blob-drift), calc(var(--blob-drift) * -0.67)); }
+  to   { transform: translate(-50%, -50%) translate(var(--blob-drift), calc(var(--blob-y-offset) * -1)); }
 }
 
 @keyframes float2 {
   from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(calc(var(--blob-drift) * -0.83), calc(var(--blob-drift) * 0.72)); }
+  to   { transform: translate(-50%, -50%) translate(calc(var(--blob-drift) * -0.83), var(--blob-y-offset)); }
 }
 
 @keyframes float3 {
   from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(calc(var(--blob-drift) * 0.72), calc(var(--blob-drift) * -0.89)); }
+  to   { transform: translate(-50%, -50%) translate(calc(var(--blob-drift) * 0.72), calc(var(--blob-y-offset) * -1)); }
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────────── */

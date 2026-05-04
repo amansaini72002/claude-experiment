@@ -45,7 +45,8 @@ function GenloopMark() {
 const DEFAULTS = {
   size:      1.0,   // blob scale multiplier
   blur:      35,    // px
-  drift:     90,    // px — how far each blob travels per cycle
+  drift:     90,    // px — horizontal travel per cycle
+  yOffset:   60,    // px — vertical travel per cycle
   speed:     26,    // s — base animation duration
   intensity: 0.97,  // white opacity at the gradient core
 }
@@ -79,6 +80,7 @@ export default function App() {
     '--blob-size':      c.size,
     '--blob-blur':      `${c.blur}px`,
     '--blob-drift':     `${c.drift}px`,
+    '--blob-y-offset':  `${c.yOffset}px`,
     '--blob-speed':     `${c.speed}s`,
     '--blob-intensity': c.intensity,
   }
@@ -162,7 +164,8 @@ export default function App() {
           <div className="ctrl-body">
             <Slider label="Size"      value={c.size}      min={0.5}  max={3.0}  step={0.05} unit="×"  onChange={v => set('size', v)} />
             <Slider label="Softness"  value={c.blur}      min={5}    max={120}  step={1}    unit="px" onChange={v => set('blur', v)} />
-            <Slider label="Drift"     value={c.drift}     min={10}   max={300}  step={5}    unit="px" onChange={v => set('drift', v)} />
+            <Slider label="X Drift"   value={c.drift}     min={10}   max={300}  step={5}    unit="px" onChange={v => set('drift', v)} />
+            <Slider label="Y Offset"  value={c.yOffset}   min={10}   max={300}  step={5}    unit="px" onChange={v => set('yOffset', v)} />
             <Slider label="Speed"     value={c.speed}     min={4}    max={80}   step={1}    unit="s"  onChange={v => set('speed', v)} />
             <Slider label="Intensity" value={c.intensity} min={0.3}  max={1.0}  step={0.01} unit=""   onChange={v => set('intensity', v)} />
           </div>

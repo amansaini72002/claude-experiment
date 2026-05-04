@@ -42,31 +42,39 @@ function GenloopMark() {
   )
 }
 
+// Splits a hex color into separate R G B integers for use in rgba() CSS vars
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return [r, g, b]
+}
+
 const DEFAULTS = {
-  size:        1.0,
-  blur:        50,
-  drift:       60,
-  yOffset:     40,
-  speed:       26,
-  intensity:   0.97,
-  noise:       0.03,   // matches Figma opacity-3 (3%)
-  noiseSize:   1024,   // px tile — matches Figma bg-size-[1024px_1024px]
+  global: { blur: 50, speed: 26 },
+  blobs: [
+    // size = vw multiplier (1.4 → 140vw diameter)
+    { size: 1.4, top: 76, left: 50, xDrift: 60, yDrift: 40, intensity: 0.97, color: '#bae6fd' },
+    { size: 1.1, top: 60, left: 44, xDrift: 50, yDrift: 33, intensity: 0.88, color: '#e0f2fe' },
+    { size: 1.0, top: 90, left: 58, xDrift: 43, yDrift: 40, intensity: 0.70, color: '#7dd3fc' },
+  ],
+  noise: 0.03,
+  noiseSize: 1024,
 }
 
 function Slider({ label, value, min, max, step, unit, onChange }) {
+  const display = typeof value === 'number' && step < 1
+    ? value.toFixed(String(step).split('.')[1]?.length ?? 0)
+    : value
   return (
     <div className="ctrl-row">
       <span className="ctrl-label">{label}</span>
       <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
+        type="range" min={min} max={max} step={step} value={value}
         onChange={e => onChange(Number(e.target.value))}
         className="ctrl-slider"
       />
-      <span className="ctrl-value">{value}{unit}</span>
+      <span className="ctrl-value">{display}{unit}</span>
     </div>
   )
 }
@@ -74,31 +82,53 @@ function Slider({ label, value, min, max, step, unit, onChange }) {
 export default function App() {
   const [c, setC] = useState(DEFAULTS)
   const [open, setOpen] = useState(true)
+  const [activeBlob, setActiveBlob] = useState(0)
 
-  const set = (key, val) => setC(prev => ({ ...prev, [key]: val }))
+  const setGlobal = (key, val) =>
+    setC(prev => ({ ...prev, global: { ...prev.global, [key]: val } }))
+
+  const setBlob = (i, key, val) =>
+    setC(prev => {
+      const blobs = [...prev.blobs]
+      blobs[i] = { ...blobs[i], [key]: val }
+      return { ...prev, blobs }
+    })
+
+  const setVal = (key, val) => setC(prev => ({ ...prev, [key]: val }))
   const reset = () => setC(DEFAULTS)
 
+  // Build CSS custom properties — per-blob vars use --b1-*, --b2-*, --b3-*
   const cssVars = {
-    '--blob-size':      c.size,
-    '--blob-blur':      `${c.blur}px`,
-    '--blob-drift':     `${c.drift}px`,
-    '--blob-y-offset':  `${c.yOffset}px`,
-    '--blob-speed':     `${c.speed}s`,
-    '--blob-intensity': c.intensity,
-    '--noise-opacity':  c.noise,
-    '--noise-size':     `${c.noiseSize}px`,
+    '--blob-blur':     `${c.global.blur}px`,
+    '--blob-speed':    `${c.global.speed}s`,
+    '--noise-opacity': c.noise,
+    '--noise-size':    `${c.noiseSize}px`,
   }
+  c.blobs.forEach((b, i) => {
+    const n = i + 1
+    const [r, g, bv] = hexToRgb(b.color)
+    Object.assign(cssVars, {
+      [`--b${n}-size`]:      b.size,
+      [`--b${n}-top`]:       `${b.top}%`,
+      [`--b${n}-left`]:      `${b.left}%`,
+      [`--b${n}-x-drift`]:   `${b.xDrift}px`,
+      [`--b${n}-y-drift`]:   `${b.yDrift}px`,
+      [`--b${n}-intensity`]: b.intensity,
+      [`--b${n}-r`]:         r,
+      [`--b${n}-g`]:         g,
+      [`--b${n}-b`]:         bv,
+    })
+  })
+
+  const b = c.blobs[activeBlob]
 
   return (
     <main className="hero" style={cssVars}>
-      {/* Cloud blobs */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
-      {/* Noise texture overlay */}
       <div className="noise-layer" aria-hidden="true" />
 
-      {/* Navbar */}
       <nav className="navbar">
         <div className="nav-left">
           <a className="logo" href="#">
@@ -118,12 +148,9 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Hero content */}
       <div className="hero-content">
         <div className="hero-text">
-          <h1>
-            <span className="highlight">Data Analyst</span> For Every Team
-          </h1>
+          <h1><span className="highlight">Data Analyst</span> For Every Team</h1>
           <p>Connect all your data. Ask in plain English. Get deep, trustworthy insights and actions.</p>
         </div>
 
@@ -138,46 +165,72 @@ export default function App() {
         <div className="badges">
           <div className="badge">
             <span className="laurel left"><Laurel /></span>
-            <div className="badge-text">
-              <span>No. 1</span>
-              <span>Spider Benchmark</span>
-            </div>
+            <div className="badge-text"><span>No. 1</span><span>Spider Benchmark</span></div>
             <span className="laurel right"><Laurel /></span>
           </div>
           <div className="badge">
             <span className="laurel left"><Laurel /></span>
-            <div className="badge-text">
-              <span>Most Innovative</span>
-              <span>Product - NetApp</span>
-            </div>
+            <div className="badge-text"><span>Most Innovative</span><span>Product - NetApp</span></div>
             <span className="laurel right"><Laurel /></span>
           </div>
         </div>
       </div>
 
-      {/* Live controls */}
+      {/* ── Control panel ── */}
       <div className="ctrl-panel">
         <div className="ctrl-header">
-          <span className="ctrl-title">Cloud Controls</span>
+          <span className="ctrl-title">Controls</span>
           <div className="ctrl-actions">
             <button className="ctrl-btn" onClick={reset}>Reset</button>
-            <button className="ctrl-btn ctrl-toggle" onClick={() => setOpen(o => !o)}>
-              {open ? '▲' : '▼'}
-            </button>
+            <button className="ctrl-btn" onClick={() => setOpen(o => !o)}>{open ? '▲' : '▼'}</button>
           </div>
         </div>
+
         {open && (
           <div className="ctrl-body">
-            <div className="ctrl-section-label">Cloud</div>
-            <Slider label="Size"      value={c.size}      min={0.5}  max={3.0}  step={0.05} unit="×"  onChange={v => set('size', v)} />
-            <Slider label="Softness"  value={c.blur}      min={5}    max={120}  step={1}    unit="px" onChange={v => set('blur', v)} />
-            <Slider label="X Drift"   value={c.drift}     min={10}   max={300}  step={5}    unit="px" onChange={v => set('drift', v)} />
-            <Slider label="Y Offset"  value={c.yOffset}   min={10}   max={300}  step={5}    unit="px" onChange={v => set('yOffset', v)} />
-            <Slider label="Speed"     value={c.speed}     min={4}    max={80}   step={1}    unit="s"  onChange={v => set('speed', v)} />
-            <Slider label="Intensity" value={c.intensity} min={0.3}  max={1.0}  step={0.01} unit=""   onChange={v => set('intensity', v)} />
+
+            {/* Global */}
+            <div className="ctrl-section-label">Global</div>
+            <Slider label="Blur"  value={c.global.blur}  min={5}  max={120} step={1} unit="px" onChange={v => setGlobal('blur', v)} />
+            <Slider label="Speed" value={c.global.speed} min={4}  max={80}  step={1} unit="s"  onChange={v => setGlobal('speed', v)} />
+
+            {/* Per-blob */}
+            <div className="ctrl-section-label">Blobs</div>
+            <div className="ctrl-tabs">
+              {['Blob 1', 'Blob 2', 'Blob 3'].map((label, i) => (
+                <button
+                  key={i}
+                  className={`ctrl-tab${activeBlob === i ? ' active' : ''}`}
+                  onClick={() => setActiveBlob(i)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <Slider label="Size"      value={b.size}      min={0.2}  max={3.0}  step={0.05} unit="×"  onChange={v => setBlob(activeBlob, 'size', v)} />
+            <Slider label="Top"       value={b.top}       min={0}    max={200}  step={1}    unit="%"   onChange={v => setBlob(activeBlob, 'top', v)} />
+            <Slider label="Left"      value={b.left}      min={-50}  max={150}  step={1}    unit="%"   onChange={v => setBlob(activeBlob, 'left', v)} />
+            <Slider label="X Drift"   value={b.xDrift}    min={0}    max={300}  step={5}    unit="px"  onChange={v => setBlob(activeBlob, 'xDrift', v)} />
+            <Slider label="Y Drift"   value={b.yDrift}    min={0}    max={300}  step={5}    unit="px"  onChange={v => setBlob(activeBlob, 'yDrift', v)} />
+            <Slider label="Intensity" value={b.intensity} min={0}    max={1.0}  step={0.01} unit=""    onChange={v => setBlob(activeBlob, 'intensity', v)} />
+
+            <div className="ctrl-row">
+              <span className="ctrl-label">Color</span>
+              <input
+                type="color"
+                className="ctrl-color"
+                value={b.color}
+                onChange={e => setBlob(activeBlob, 'color', e.target.value)}
+              />
+              <span className="ctrl-value" style={{ fontSize: 10 }}>{b.color}</span>
+            </div>
+
+            {/* Noise */}
             <div className="ctrl-section-label">Noise</div>
-            <Slider label="Opacity"   value={c.noise}     min={0}    max={0.2}  step={0.005} unit=""  onChange={v => set('noise', v)} />
-            <Slider label="Grain"     value={c.noiseSize} min={50}   max={1024} step={50}   unit="px" onChange={v => set('noiseSize', v)} />
+            <Slider label="Opacity" value={c.noise}     min={0}   max={0.2}  step={0.005} unit=""    onChange={v => setVal('noise', v)} />
+            <Slider label="Grain"   value={c.noiseSize} min={50}  max={1024} step={50}    unit="px"  onChange={v => setVal('noiseSize', v)} />
+
           </div>
         )}
       </div>

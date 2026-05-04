@@ -277,15 +277,15 @@ export default function App() {
 
       <div className="hero-content">
         <div className="hero-text">
-          <h1><span className="highlight">Data Analyst</span> For Every Team</h1>
-          <p>Connect all your data. Ask in plain English. Get deep, trustworthy insights and actions.</p>
+          <h1>The most accurate data intelligence stack for the AI world.</h1>
+          <p>Your data team built the warehouse. Business users are still in their inbox every day. Genloop fixes that with a verified intelligence layer that learns your business, gets more accurate with every conversation, and works wherever your people and your AI do.</p>
         </div>
         <div className="search-bar">
           <div className="search-left">
             <div className="orb" />
             <span className="search-placeholder">Ask anything about your data...</span>
           </div>
-          <button className="btn-cta">Book a Demo <ChevronRight /></button>
+          <button className="btn-cta">Get started for free <ChevronRight /></button>
         </div>
         <div className="badges">
           <div className="badge">

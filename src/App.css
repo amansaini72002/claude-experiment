@@ -24,54 +24,56 @@
   will-change: transform;
 }
 
-/* All blob dimensions and behaviour driven by CSS custom properties set from React state */
+/* All blob dimensions and behaviour driven by CSS custom properties set from React state.
+   Key insight from Figma: the backdrop circle center sits at ~75% from top of the frame —
+   we see the upper arc of a massive circle. Blue shows at top corners, white fills center. */
 
-/* Main body — dominant white mass, oversized so it bleeds past edges */
+/* Main — primary white mass. Perfect circle, center pushed below viewport so we see its arc */
 .blob-1 {
-  width:  calc(120vw * var(--blob-size));
-  height: calc(85vh  * var(--blob-size));
-  top: 50%;
+  width:  calc(140vw * var(--blob-size));
+  height: calc(140vw * var(--blob-size));
+  top: 76%;
   left: 50%;
   background: radial-gradient(
-    ellipse at center,
+    circle at center,
     rgba(255, 255, 255, var(--blob-intensity)) 0%,
-    rgba(224, 242, 254, calc(var(--blob-intensity) * 0.72)) 35%,
-    rgba(186, 230, 255, calc(var(--blob-intensity) * 0.26)) 58%,
-    transparent 72%
+    rgba(224, 242, 254, calc(var(--blob-intensity) * 0.72)) 28%,
+    rgba(186, 230, 255, calc(var(--blob-intensity) * 0.28)) 52%,
+    transparent 66%
   );
   filter: blur(var(--blob-blur));
   animation: float1 var(--blob-speed) ease-in-out infinite alternate;
   animation-delay: -6s;
 }
 
-/* Upper-left secondary — widens the cloud body to the left */
+/* Secondary — slightly above and left, broadens the cloud body */
 .blob-2 {
-  width:  calc(95vw * var(--blob-size));
-  height: calc(70vh * var(--blob-size));
-  top: 35%;
-  left: 38%;
+  width:  calc(110vw * var(--blob-size));
+  height: calc(110vw * var(--blob-size));
+  top: 60%;
+  left: 44%;
   background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, calc(var(--blob-intensity) * 0.91)) 0%,
-    rgba(186, 230, 255, calc(var(--blob-intensity) * 0.43)) 42%,
-    transparent 70%
+    circle at center,
+    rgba(255, 255, 255, calc(var(--blob-intensity) * 0.88)) 0%,
+    rgba(186, 230, 255, calc(var(--blob-intensity) * 0.38)) 40%,
+    transparent 64%
   );
   filter: blur(calc(var(--blob-blur) * 1.4));
   animation: float2 calc(var(--blob-speed) * 0.73) ease-in-out infinite alternate;
   animation-delay: -11s;
 }
 
-/* Lower-right accent — lets primary blue peek through the bottom-right */
+/* Accent — lower and right, lets teal bleed through for the emerald tint in the design */
 .blob-3 {
-  width:  calc(80vw * var(--blob-size));
-  height: calc(65vh * var(--blob-size));
-  top: 62%;
-  left: 63%;
+  width:  calc(100vw * var(--blob-size));
+  height: calc(100vw * var(--blob-size));
+  top: 90%;
+  left: 58%;
   background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, calc(var(--blob-intensity) * 0.77)) 0%,
-    rgba(125, 211, 252, calc(var(--blob-intensity) * 0.31)) 48%,
-    transparent 72%
+    circle at center,
+    rgba(255, 255, 255, calc(var(--blob-intensity) * 0.70)) 0%,
+    rgba(125, 211, 252, calc(var(--blob-intensity) * 0.30)) 42%,
+    transparent 62%
   );
   filter: blur(calc(var(--blob-blur) * 1.7));
   animation: float3 calc(var(--blob-speed) * 1.27) ease-in-out infinite alternate;

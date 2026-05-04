@@ -44,9 +44,9 @@ function GenloopMark() {
 
 const DEFAULTS = {
   size:      1.0,   // blob scale multiplier
-  blur:      35,    // px
-  drift:     90,    // px — horizontal travel per cycle
-  yOffset:   60,    // px — vertical travel per cycle
+  blur:      50,    // px
+  drift:     60,    // px — horizontal travel per cycle
+  yOffset:   40,    // px — vertical travel per cycle
   speed:     26,    // s — base animation duration
   intensity: 0.97,  // white opacity at the gradient core
 }

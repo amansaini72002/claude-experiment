@@ -12,10 +12,9 @@
 
 /* ─── Cloud blobs ─────────────────────────────────────────────────────────── */
 /*
-  Three independent blobs — soft radial gradients with heavy blur.
-  Only `transform` animates, keeping everything GPU-composited.
-  Prime-ish durations (19s, 26s, 33s) ensure they never fall back in sync.
-  Negative delays start them mid-cycle so motion is visible immediately on load.
+  Blob 1 — linear gradient circle, soft blur creates the white cloud arch.
+  Blob 2 — flat solid colour, heavy blur bleeds it into the background.
+  Only transform animates — GPU composited, zero repaints.
 */
 .blob {
   position: absolute;
@@ -24,78 +23,40 @@
   will-change: transform;
 }
 
-/* Each blob is fully driven by its own --b{n}-* CSS custom properties set from React.
-   Gradient uses rgba(var(--b{n}-r), var(--b{n}-g), var(--b{n}-b), alpha) so the
-   color picker maps directly to the mid-gradient accent colour. */
-
 .blob-1 {
-  width:  calc(100vw * var(--b1-size));
-  height: calc(100vw * var(--b1-size));
-  top:  var(--b1-top);
-  left: var(--b1-left);
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, var(--b1-intensity)) 0%,
-    rgba(var(--b1-r), var(--b1-g), var(--b1-b), 0.55) 28%,
-    rgba(var(--b1-r), var(--b1-g), var(--b1-b), 0.20) 52%,
-    transparent 66%
-  );
-  filter: blur(var(--blob-blur));
-  animation: float1 var(--blob-speed) ease-in-out infinite alternate;
-  animation-delay: -6s;
+  width:  var(--b1-size);
+  height: var(--b1-size);
+  top:  var(--b1-y);
+  left: var(--b1-x);
+  background: linear-gradient(var(--b1-angle), var(--b1-from), var(--b1-to));
+  filter: blur(var(--b1-blur));
+  animation: float1 var(--speed) ease-in-out infinite alternate;
+  animation-delay: -3s;
 }
 
 .blob-2 {
-  width:  calc(100vw * var(--b2-size));
-  height: calc(100vw * var(--b2-size));
-  top:  var(--b2-top);
-  left: var(--b2-left);
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, var(--b2-intensity)) 0%,
-    rgba(var(--b2-r), var(--b2-g), var(--b2-b), 0.50) 28%,
-    rgba(var(--b2-r), var(--b2-g), var(--b2-b), 0.18) 52%,
-    transparent 66%
-  );
-  filter: blur(calc(var(--blob-blur) * 1.4));
-  animation: float2 calc(var(--blob-speed) * 0.73) ease-in-out infinite alternate;
-  animation-delay: -11s;
+  width:  var(--b2-size);
+  height: var(--b2-size);
+  top:  var(--b2-y);
+  left: var(--b2-x);
+  background: var(--b2-color);
+  filter: blur(var(--b2-blur));
+  animation: float2 calc(var(--speed) * 0.65) ease-in-out infinite alternate;
+  animation-delay: -5s;
 }
 
-.blob-3 {
-  width:  calc(100vw * var(--b3-size));
-  height: calc(100vw * var(--b3-size));
-  top:  var(--b3-top);
-  left: var(--b3-left);
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, var(--b3-intensity)) 0%,
-    rgba(var(--b3-r), var(--b3-g), var(--b3-b), 0.45) 28%,
-    rgba(var(--b3-r), var(--b3-g), var(--b3-b), 0.15) 52%,
-    transparent 66%
-  );
-  filter: blur(calc(var(--blob-blur) * 1.7));
-  animation: float3 calc(var(--blob-speed) * 1.27) ease-in-out infinite alternate;
-  animation-delay: -20s;
-}
-
-/* Blob 1: drifts +x, -y */
+/* Blob 1 drifts right + up */
 @keyframes float1 {
   from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(var(--b1-x-drift), calc(var(--b1-y-drift) * -1)); }
+  to   { transform: translate(-50%, -50%) translate(var(--b1-xdrift), calc(var(--b1-ydrift) * -1)); }
 }
 
-/* Blob 2: drifts -x, +y */
+/* Blob 2 drifts left + down (opposite direction for organic feel) */
 @keyframes float2 {
   from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(calc(var(--b2-x-drift) * -1), var(--b2-y-drift)); }
+  to   { transform: translate(-50%, -50%) translate(calc(var(--b2-xdrift) * -1), var(--b2-ydrift)); }
 }
 
-/* Blob 3: drifts +x, -y */
-@keyframes float3 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(var(--b3-x-drift), calc(var(--b3-y-drift) * -1)); }
-}
 
 /* ─── Noise texture layer ────────────────────────────────────────────────── */
 /*

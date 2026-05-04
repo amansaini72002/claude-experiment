@@ -42,30 +42,39 @@ function GenloopMark() {
   )
 }
 
-// Splits a hex color into separate R G B integers for use in rgba() CSS vars
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return [r, g, b]
-}
-
 const DEFAULTS = {
-  global: { blur: 50, speed: 26 },
-  blobs: [
-    // size = vw multiplier (1.4 → 140vw diameter)
-    { size: 1.4, top: 76, left: 50, xDrift: 60, yDrift: 40, intensity: 0.97, color: '#bae6fd' },
-    { size: 1.1, top: 60, left: 44, xDrift: 50, yDrift: 33, intensity: 0.88, color: '#e0f2fe' },
-    { size: 1.0, top: 90, left: 58, xDrift: 43, yDrift: 40, intensity: 0.70, color: '#7dd3fc' },
-  ],
-  noise: 0.03,
+  speed: 8,     // global animation speed (3–20s)
+
+  // Blob 1 — linear gradient circle
+  blob1: {
+    size:    130,   // vw
+    x:        50,   // % (left)
+    y:        72,   // % (top — center pushed below viewport for the arch look)
+    from:   '#ffffff',
+    to:     '#bae6fd',
+    angle:   160,   // deg
+    blur:     70,   // px
+    xDrift:   60,   // px animation range
+    yDrift:   40,   // px animation range
+  },
+
+  // Blob 2 — solid colour + blur
+  blob2: {
+    size:    75,
+    x:       58,
+    y:       85,
+    color:  '#7dd3fc',
+    blur:   100,
+    xDrift:  50,
+    yDrift:  50,
+  },
+
+  noise:     0.03,
   noiseSize: 1024,
 }
 
 function Slider({ label, value, min, max, step, unit, onChange }) {
-  const display = typeof value === 'number' && step < 1
-    ? value.toFixed(String(step).split('.')[1]?.length ?? 0)
-    : value
+  const decimals = step < 1 ? String(step).split('.')[1]?.length ?? 0 : 0
   return (
     <div className="ctrl-row">
       <span className="ctrl-label">{label}</span>
@@ -74,7 +83,18 @@ function Slider({ label, value, min, max, step, unit, onChange }) {
         onChange={e => onChange(Number(e.target.value))}
         className="ctrl-slider"
       />
-      <span className="ctrl-value">{display}{unit}</span>
+      <span className="ctrl-value">{Number(value).toFixed(decimals)}{unit}</span>
+    </div>
+  )
+}
+
+function ColorRow({ label, value, onChange }) {
+  return (
+    <div className="ctrl-row">
+      <span className="ctrl-label">{label}</span>
+      <input type="color" className="ctrl-color" value={value}
+        onChange={e => onChange(e.target.value)} />
+      <span className="ctrl-value" style={{ fontSize: 10 }}>{value}</span>
     </div>
   )
 }
@@ -82,51 +102,40 @@ function Slider({ label, value, min, max, step, unit, onChange }) {
 export default function App() {
   const [c, setC] = useState(DEFAULTS)
   const [open, setOpen] = useState(true)
-  const [activeBlob, setActiveBlob] = useState(0)
 
-  const setGlobal = (key, val) =>
-    setC(prev => ({ ...prev, global: { ...prev.global, [key]: val } }))
-
-  const setBlob = (i, key, val) =>
-    setC(prev => {
-      const blobs = [...prev.blobs]
-      blobs[i] = { ...blobs[i], [key]: val }
-      return { ...prev, blobs }
-    })
-
-  const setVal = (key, val) => setC(prev => ({ ...prev, [key]: val }))
+  const set  = (key, val) => setC(p => ({ ...p, [key]: val }))
+  const set1 = (key, val) => setC(p => ({ ...p, blob1: { ...p.blob1, [key]: val } }))
+  const set2 = (key, val) => setC(p => ({ ...p, blob2: { ...p.blob2, [key]: val } }))
   const reset = () => setC(DEFAULTS)
 
-  // Build CSS custom properties — per-blob vars use --b1-*, --b2-*, --b3-*
   const cssVars = {
-    '--blob-blur':     `${c.global.blur}px`,
-    '--blob-speed':    `${c.global.speed}s`,
+    '--speed':         `${c.speed}s`,
     '--noise-opacity': c.noise,
     '--noise-size':    `${c.noiseSize}px`,
+    // Blob 1
+    '--b1-size':    `${c.blob1.size}vw`,
+    '--b1-x':       `${c.blob1.x}%`,
+    '--b1-y':       `${c.blob1.y}%`,
+    '--b1-from':     c.blob1.from,
+    '--b1-to':       c.blob1.to,
+    '--b1-angle':   `${c.blob1.angle}deg`,
+    '--b1-blur':    `${c.blob1.blur}px`,
+    '--b1-xdrift':  `${c.blob1.xDrift}px`,
+    '--b1-ydrift':  `${c.blob1.yDrift}px`,
+    // Blob 2
+    '--b2-size':    `${c.blob2.size}vw`,
+    '--b2-x':       `${c.blob2.x}%`,
+    '--b2-y':       `${c.blob2.y}%`,
+    '--b2-color':    c.blob2.color,
+    '--b2-blur':    `${c.blob2.blur}px`,
+    '--b2-xdrift':  `${c.blob2.xDrift}px`,
+    '--b2-ydrift':  `${c.blob2.yDrift}px`,
   }
-  c.blobs.forEach((b, i) => {
-    const n = i + 1
-    const [r, g, bv] = hexToRgb(b.color)
-    Object.assign(cssVars, {
-      [`--b${n}-size`]:      b.size,
-      [`--b${n}-top`]:       `${b.top}%`,
-      [`--b${n}-left`]:      `${b.left}%`,
-      [`--b${n}-x-drift`]:   `${b.xDrift}px`,
-      [`--b${n}-y-drift`]:   `${b.yDrift}px`,
-      [`--b${n}-intensity`]: b.intensity,
-      [`--b${n}-r`]:         r,
-      [`--b${n}-g`]:         g,
-      [`--b${n}-b`]:         bv,
-    })
-  })
-
-  const b = c.blobs[activeBlob]
 
   return (
     <main className="hero" style={cssVars}>
       <div className="blob blob-1" />
       <div className="blob blob-2" />
-      <div className="blob blob-3" />
       <div className="noise-layer" aria-hidden="true" />
 
       <nav className="navbar">
@@ -153,7 +162,6 @@ export default function App() {
           <h1><span className="highlight">Data Analyst</span> For Every Team</h1>
           <p>Connect all your data. Ask in plain English. Get deep, trustworthy insights and actions.</p>
         </div>
-
         <div className="search-bar">
           <div className="search-left">
             <div className="orb" />
@@ -161,7 +169,6 @@ export default function App() {
           </div>
           <button className="btn-cta">Book a Demo <ChevronRight /></button>
         </div>
-
         <div className="badges">
           <div className="badge">
             <span className="laurel left"><Laurel /></span>
@@ -189,47 +196,32 @@ export default function App() {
         {open && (
           <div className="ctrl-body">
 
-            {/* Global */}
             <div className="ctrl-section-label">Global</div>
-            <Slider label="Blur"  value={c.global.blur}  min={5}  max={120} step={1} unit="px" onChange={v => setGlobal('blur', v)} />
-            <Slider label="Speed" value={c.global.speed} min={4}  max={80}  step={1} unit="s"  onChange={v => setGlobal('speed', v)} />
+            <Slider label="Speed" value={c.speed} min={3} max={20} step={0.5} unit="s" onChange={v => set('speed', v)} />
 
-            {/* Per-blob */}
-            <div className="ctrl-section-label">Blobs</div>
-            <div className="ctrl-tabs">
-              {['Blob 1', 'Blob 2', 'Blob 3'].map((label, i) => (
-                <button
-                  key={i}
-                  className={`ctrl-tab${activeBlob === i ? ' active' : ''}`}
-                  onClick={() => setActiveBlob(i)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <div className="ctrl-section-label">Blob 1 — Linear Gradient</div>
+            <Slider    label="Size"    value={c.blob1.size}   min={40}  max={220} step={5}    unit="vw"  onChange={v => set1('size', v)} />
+            <Slider    label="X"       value={c.blob1.x}      min={-50} max={150} step={1}    unit="%"   onChange={v => set1('x', v)} />
+            <Slider    label="Y"       value={c.blob1.y}      min={0}   max={200} step={1}    unit="%"   onChange={v => set1('y', v)} />
+            <Slider    label="Angle"   value={c.blob1.angle}  min={0}   max={360} step={1}    unit="°"   onChange={v => set1('angle', v)} />
+            <ColorRow  label="From"    value={c.blob1.from}   onChange={v => set1('from', v)} />
+            <ColorRow  label="To"      value={c.blob1.to}     onChange={v => set1('to', v)} />
+            <Slider    label="Blur"    value={c.blob1.blur}   min={0}   max={200} step={5}    unit="px"  onChange={v => set1('blur', v)} />
+            <Slider    label="X Drift" value={c.blob1.xDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set1('xDrift', v)} />
+            <Slider    label="Y Drift" value={c.blob1.yDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set1('yDrift', v)} />
 
-            <Slider label="Size"      value={b.size}      min={0.2}  max={3.0}  step={0.05} unit="×"  onChange={v => setBlob(activeBlob, 'size', v)} />
-            <Slider label="Top"       value={b.top}       min={0}    max={200}  step={1}    unit="%"   onChange={v => setBlob(activeBlob, 'top', v)} />
-            <Slider label="Left"      value={b.left}      min={-50}  max={150}  step={1}    unit="%"   onChange={v => setBlob(activeBlob, 'left', v)} />
-            <Slider label="X Drift"   value={b.xDrift}    min={0}    max={300}  step={5}    unit="px"  onChange={v => setBlob(activeBlob, 'xDrift', v)} />
-            <Slider label="Y Drift"   value={b.yDrift}    min={0}    max={300}  step={5}    unit="px"  onChange={v => setBlob(activeBlob, 'yDrift', v)} />
-            <Slider label="Intensity" value={b.intensity} min={0}    max={1.0}  step={0.01} unit=""    onChange={v => setBlob(activeBlob, 'intensity', v)} />
+            <div className="ctrl-section-label">Blob 2 — Solid + Blur</div>
+            <Slider    label="Size"    value={c.blob2.size}   min={20}  max={200} step={5}    unit="vw"  onChange={v => set2('size', v)} />
+            <Slider    label="X"       value={c.blob2.x}      min={-50} max={150} step={1}    unit="%"   onChange={v => set2('x', v)} />
+            <Slider    label="Y"       value={c.blob2.y}      min={0}   max={200} step={1}    unit="%"   onChange={v => set2('y', v)} />
+            <ColorRow  label="Color"   value={c.blob2.color}  onChange={v => set2('color', v)} />
+            <Slider    label="Blur"    value={c.blob2.blur}   min={0}   max={200} step={5}    unit="px"  onChange={v => set2('blur', v)} />
+            <Slider    label="X Drift" value={c.blob2.xDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set2('xDrift', v)} />
+            <Slider    label="Y Drift" value={c.blob2.yDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set2('yDrift', v)} />
 
-            <div className="ctrl-row">
-              <span className="ctrl-label">Color</span>
-              <input
-                type="color"
-                className="ctrl-color"
-                value={b.color}
-                onChange={e => setBlob(activeBlob, 'color', e.target.value)}
-              />
-              <span className="ctrl-value" style={{ fontSize: 10 }}>{b.color}</span>
-            </div>
-
-            {/* Noise */}
             <div className="ctrl-section-label">Noise</div>
-            <Slider label="Opacity" value={c.noise}     min={0}   max={0.2}  step={0.005} unit=""    onChange={v => setVal('noise', v)} />
-            <Slider label="Grain"   value={c.noiseSize} min={50}  max={1024} step={50}    unit="px"  onChange={v => setVal('noiseSize', v)} />
+            <Slider label="Opacity" value={c.noise}     min={0}  max={0.2}  step={0.005} unit=""    onChange={v => set('noise', v)} />
+            <Slider label="Grain"   value={c.noiseSize} min={50} max={1024} step={50}    unit="px"  onChange={v => set('noiseSize', v)} />
 
           </div>
         )}

@@ -45,16 +45,16 @@
   animation-delay: -5s;
 }
 
-/* Blob 1 drifts right + up */
+/* Blob 1 drifts right + up, grows slightly — scale shift is visible through any blur */
 @keyframes float1 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(var(--b1-xdrift), calc(var(--b1-ydrift) * -1)); }
+  from { transform: translate(-50%, -50%) translate(0px, 0px) scale(1); }
+  to   { transform: translate(-50%, -50%) translate(var(--b1-xdrift), calc(var(--b1-ydrift) * -1)) scale(calc(1 + var(--b1-scale))); }
 }
 
-/* Blob 2 drifts left + down (opposite direction for organic feel) */
+/* Blob 2 drifts left + down, shrinks slightly — opposite phase for organic feel */
 @keyframes float2 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(calc(var(--b2-xdrift) * -1), var(--b2-ydrift)); }
+  from { transform: translate(-50%, -50%) translate(0px, 0px) scale(1); }
+  to   { transform: translate(-50%, -50%) translate(calc(var(--b2-xdrift) * -1), var(--b2-ydrift)) scale(calc(1 - var(--b2-scale))); }
 }
 
 

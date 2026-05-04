@@ -43,30 +43,32 @@ function GenloopMark() {
 }
 
 const DEFAULTS = {
-  speed: 8,     // global animation speed (3–20s)
+  speed: 3,     // global animation speed (3–20s)
 
   // Blob 1 — linear gradient circle
   blob1: {
-    size:    130,   // vw
-    x:        50,   // % (left)
-    y:        72,   // % (top — center pushed below viewport for the arch look)
+    size:    105,   // vw
+    x:        47,   // % (left)
+    y:       109,   // % (top — center pushed below viewport for the arch look)
     from:   '#ffffff',
-    to:     '#bae6fd',
-    angle:   160,   // deg
-    blur:     70,   // px
+    to:     '#ffffff',
+    angle:   166,   // deg
+    blur:    155,   // px
     xDrift:   60,   // px animation range
     yDrift:   40,   // px animation range
+    scale:  0.08,   // scale delta (animates 1.0 → 1+scale)
   },
 
   // Blob 2 — solid colour + blur
   blob2: {
-    size:    75,
-    x:       58,
-    y:       85,
+    size:    50,
+    x:       50,
+    y:      176,
     color:  '#7dd3fc',
-    blur:   100,
+    blur:   200,
     xDrift:  50,
     yDrift:  50,
+    scale:  0.08,   // scale delta (animates 1.0 → 1-scale)
   },
 
   noise:     0.03,
@@ -122,6 +124,7 @@ export default function App() {
     '--b1-blur':    `${c.blob1.blur}px`,
     '--b1-xdrift':  `${c.blob1.xDrift}px`,
     '--b1-ydrift':  `${c.blob1.yDrift}px`,
+    '--b1-scale':    c.blob1.scale,
     // Blob 2
     '--b2-size':    `${c.blob2.size}vw`,
     '--b2-x':       `${c.blob2.x}%`,
@@ -130,6 +133,7 @@ export default function App() {
     '--b2-blur':    `${c.blob2.blur}px`,
     '--b2-xdrift':  `${c.blob2.xDrift}px`,
     '--b2-ydrift':  `${c.blob2.yDrift}px`,
+    '--b2-scale':    c.blob2.scale,
   }
 
   return (
@@ -207,8 +211,9 @@ export default function App() {
             <ColorRow  label="From"    value={c.blob1.from}   onChange={v => set1('from', v)} />
             <ColorRow  label="To"      value={c.blob1.to}     onChange={v => set1('to', v)} />
             <Slider    label="Blur"    value={c.blob1.blur}   min={0}   max={200} step={5}    unit="px"  onChange={v => set1('blur', v)} />
-            <Slider    label="X Drift" value={c.blob1.xDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set1('xDrift', v)} />
-            <Slider    label="Y Drift" value={c.blob1.yDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set1('yDrift', v)} />
+            <Slider    label="X Drift" value={c.blob1.xDrift} min={0}   max={500} step={5}    unit="px"  onChange={v => set1('xDrift', v)} />
+            <Slider    label="Y Drift" value={c.blob1.yDrift} min={0}   max={500} step={5}    unit="px"  onChange={v => set1('yDrift', v)} />
+            <Slider    label="Scale"   value={c.blob1.scale}  min={0}   max={0.5} step={0.01} unit=""    onChange={v => set1('scale', v)} />
 
             <div className="ctrl-section-label">Blob 2 — Solid + Blur</div>
             <Slider    label="Size"    value={c.blob2.size}   min={20}  max={200} step={5}    unit="vw"  onChange={v => set2('size', v)} />
@@ -216,8 +221,9 @@ export default function App() {
             <Slider    label="Y"       value={c.blob2.y}      min={0}   max={200} step={1}    unit="%"   onChange={v => set2('y', v)} />
             <ColorRow  label="Color"   value={c.blob2.color}  onChange={v => set2('color', v)} />
             <Slider    label="Blur"    value={c.blob2.blur}   min={0}   max={200} step={5}    unit="px"  onChange={v => set2('blur', v)} />
-            <Slider    label="X Drift" value={c.blob2.xDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set2('xDrift', v)} />
-            <Slider    label="Y Drift" value={c.blob2.yDrift} min={0}   max={300} step={5}    unit="px"  onChange={v => set2('yDrift', v)} />
+            <Slider    label="X Drift" value={c.blob2.xDrift} min={0}   max={500} step={5}    unit="px"  onChange={v => set2('xDrift', v)} />
+            <Slider    label="Y Drift" value={c.blob2.yDrift} min={0}   max={500} step={5}    unit="px"  onChange={v => set2('yDrift', v)} />
+            <Slider    label="Scale"   value={c.blob2.scale}  min={0}   max={0.5} step={0.01} unit=""    onChange={v => set2('scale', v)} />
 
             <div className="ctrl-section-label">Noise</div>
             <Slider label="Opacity" value={c.noise}     min={0}  max={0.2}  step={0.005} unit=""    onChange={v => set('noise', v)} />

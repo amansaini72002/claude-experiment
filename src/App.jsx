@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
-// ─── WebGL domain-warp shader ────────────────────────────────────────────────
+// ─── WebGL domain-warp shader ─────────────────────────────────────────── v2 ─
 const VERT = `
 attribute vec2 a_pos;
 void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
@@ -35,7 +35,7 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_res;
-  float t = u_time * 0.05;
+  float t = u_time * 0.050;
 
   // Single warp pass — softer, cloudier movement (less ribbon-like)
   vec2 q = vec2(fbm(uv + t),

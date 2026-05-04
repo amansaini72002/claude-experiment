@@ -37,7 +37,7 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_res;
-  float t = u_time * 0.05;
+  float t = u_time * 0.050;
 
   // Single warp pass — softer, cloudier movement (less ribbon-like)
   vec2 q = vec2(fbm(uv + t),

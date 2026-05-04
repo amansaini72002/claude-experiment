@@ -1,0 +1,308 @@
+/* ─── Hero shell ─────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 640px;
+  background: var(--primary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Cloud blobs ─────────────────────────────────────────────────────────── */
+/*
+  Three independent blobs — soft radial gradients with heavy blur.
+  Only `transform` animates, keeping everything GPU-composited.
+  Prime-ish durations (19s, 26s, 33s) ensure they never fall back in sync.
+  Negative delays start them mid-cycle so motion is visible immediately on load.
+*/
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Main body — large central white mass */
+.blob-1 {
+  width: 860px;
+  height: 720px;
+  top: 50%;
+  left: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(224, 242, 254, 0.55) 42%,
+    transparent 72%
+  );
+  filter: blur(55px);
+  animation: float1 26s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+/* Upper-left secondary — slightly cooler, smaller */
+.blob-2 {
+  width: 680px;
+  height: 580px;
+  top: 32%;
+  left: 36%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(186, 230, 255, 0.32) 50%,
+    transparent 78%
+  );
+  filter: blur(80px);
+  animation: float2 19s ease-in-out infinite alternate;
+  animation-delay: -11s;
+}
+
+/* Lower-right accent — sky blue bleeds through at the edges */
+.blob-3 {
+  width: 620px;
+  height: 520px;
+  top: 62%;
+  left: 64%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(125, 211, 252, 0.22) 52%,
+    transparent 80%
+  );
+  filter: blur(90px);
+  animation: float3 33s ease-in-out infinite alternate;
+  animation-delay: -20s;
+}
+
+@keyframes float1 {
+  from { transform: translate(-50%, -50%) translate(0px, 0px); }
+  to   { transform: translate(-50%, -50%) translate(38px, -26px); }
+}
+
+@keyframes float2 {
+  from { transform: translate(-50%, -50%) translate(0px, 0px); }
+  to   { transform: translate(-50%, -50%) translate(-32px, 28px); }
+}
+
+@keyframes float3 {
+  from { transform: translate(-50%, -50%) translate(0px, 0px); }
+  to   { transform: translate(-50%, -50%) translate(24px, -34px); }
+}
+
+/* ─── Navbar ─────────────────────────────────────────────────────────────── */
+.navbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36px 120px 0;
+  flex-shrink: 0;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.logo-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: white;
+  letter-spacing: -0.3px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  line-height: 24px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  line-height: 24px;
+}
+
+.btn-outlined {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary);
+  background: white;
+  border-radius: 8px;
+  line-height: 24px;
+}
+
+/* ─── Hero content ───────────────────────────────────────────────────────── */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 42px;
+  padding: 0 24px 60px;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 512px;
+  max-width: 100%;
+}
+
+.hero-text h1 {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.9px;
+  color: var(--slate-900);
+  text-align: center;
+}
+
+.hero-text h1 .highlight {
+  color: var(--primary);
+}
+
+.hero-text p {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--slate-500);
+  text-align: center;
+}
+
+/* ─── Search / CTA bar ───────────────────────────────────────────────────── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 560px;
+  max-width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 16px 40px rgba(14, 165, 233, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.search-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.orb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(
+    circle at 35% 32%,
+    #bae6fd 0%,
+    #38bdf8 38%,
+    #0ea5e9 65%,
+    #0369a1 100%
+  );
+  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.search-placeholder {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--slate-500);
+  line-height: 28px;
+}
+
+.btn-cta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  border-radius: 8px;
+  background: linear-gradient(to bottom, #38bdf8, #0ea5e9);
+  box-shadow: 0 4px 17px rgba(0, 49, 71, 0.1), inset 0 -2px 2px #0092d4;
+  flex-shrink: 0;
+}
+
+/* ─── Award badges ───────────────────────────────────────────────────────── */
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.laurel {
+  color: var(--primary);
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+}
+
+.laurel.right {
+  transform: scaleX(-1);
+}
+
+.badge-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 122px;
+  background: linear-gradient(to bottom, var(--slate-900), rgba(15, 23, 42, 0.4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge-text span {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+}

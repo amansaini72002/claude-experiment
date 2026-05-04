@@ -24,70 +24,71 @@
   will-change: transform;
 }
 
-/* Main body — large central white mass */
+/* Main body — dominant white mass, oversized so it bleeds past edges */
 .blob-1 {
-  width: 860px;
-  height: 720px;
+  width: 120vw;
+  height: 85vh;
   top: 50%;
   left: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.94) 0%,
-    rgba(224, 242, 254, 0.55) 42%,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(224, 242, 254, 0.70) 35%,
+    rgba(186, 230, 255, 0.25) 58%,
     transparent 72%
   );
-  filter: blur(55px);
+  filter: blur(35px);
   animation: float1 26s ease-in-out infinite alternate;
   animation-delay: -6s;
 }
 
-/* Upper-left secondary — slightly cooler, smaller */
+/* Upper-left secondary — widens the cloud body to the left */
 .blob-2 {
-  width: 680px;
-  height: 580px;
-  top: 32%;
-  left: 36%;
+  width: 95vw;
+  height: 70vh;
+  top: 35%;
+  left: 38%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.78) 0%,
-    rgba(186, 230, 255, 0.32) 50%,
-    transparent 78%
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(186, 230, 255, 0.42) 42%,
+    transparent 70%
   );
-  filter: blur(80px);
+  filter: blur(50px);
   animation: float2 19s ease-in-out infinite alternate;
   animation-delay: -11s;
 }
 
-/* Lower-right accent — sky blue bleeds through at the edges */
+/* Lower-right accent — lets primary blue peek through the bottom-right */
 .blob-3 {
-  width: 620px;
-  height: 520px;
+  width: 80vw;
+  height: 65vh;
   top: 62%;
-  left: 64%;
+  left: 63%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(125, 211, 252, 0.22) 52%,
-    transparent 80%
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(125, 211, 252, 0.30) 48%,
+    transparent 72%
   );
-  filter: blur(90px);
+  filter: blur(60px);
   animation: float3 33s ease-in-out infinite alternate;
   animation-delay: -20s;
 }
 
 @keyframes float1 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(38px, -26px); }
+  from { transform: translate(-50%, -50%) translate(0px,    0px); }
+  to   { transform: translate(-50%, -50%) translate(90px,  -60px); }
 }
 
 @keyframes float2 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(-32px, 28px); }
+  from { transform: translate(-50%, -50%) translate(0px,   0px); }
+  to   { transform: translate(-50%, -50%) translate(-75px, 65px); }
 }
 
 @keyframes float3 {
-  from { transform: translate(-50%, -50%) translate(0px, 0px); }
-  to   { transform: translate(-50%, -50%) translate(24px, -34px); }
+  from { transform: translate(-50%, -50%) translate(0px,   0px); }
+  to   { transform: translate(-50%, -50%) translate(65px, -80px); }
 }
 
 /* ─── Navbar ─────────────────────────────────────────────────────────────── */

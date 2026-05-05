@@ -35,6 +35,7 @@
   top:        var(--b1-y);
   background: linear-gradient(var(--b1-angle), var(--b1-from), var(--b1-to));
   filter:     blur(var(--b1-blur));
+  opacity:    var(--b1-opacity);
   z-index:    1;
   animation:  bigFloat1 14s ease-in-out infinite alternate;
   animation-delay: -4s;
@@ -48,6 +49,7 @@
   top:        var(--b2-y);
   background: var(--b2-color);
   filter:     blur(var(--b2-blur));
+  opacity:    var(--b2-opacity);
   z-index:    1;
   animation:  bigFloat2 10s ease-in-out infinite alternate;
   animation-delay: -7s;

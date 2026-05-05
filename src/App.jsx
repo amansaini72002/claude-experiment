@@ -233,18 +233,20 @@ function GenloopMark() {
 const DEFAULTS = {
   // Big background blobs (CSS animated circles, behind BlobCanvas ellipse)
   blob1: {                    // white→light-blue gradient (node 1029:14103)
-    radius: 110,              // vw — single value keeps it a perfect circle
-    x: 48, y: 110,            // % — center below viewport creates the dome arch
-    from: '#ffffff',
-    to:   '#bae6fd',
-    angle: 160,               // gradient angle in deg
-    blur:  140,               // px
+    radius:  110,             // vw
+    x:        50, y: 112,     // % — center below viewport → only arch visible
+    from:   '#ffffff',
+    to:     '#bae6fd',
+    angle:   160,
+    blur:     60,             // px — lower default so radius changes are visible
+    opacity: 0.9,
   },
   blob2: {                    // teal solid blob (node 1029:14102)
-    radius: 85,
-    x: 55, y: 95,
-    color: '#00bcd4',
-    blur:  130,
+    radius:   90,
+    x:        54, y: 108,     // slightly offset so teal peeks around white
+    color:  '#00bcd4',
+    blur:     80,
+    opacity: 0.75,
   },
   // Ellipse geometry
   CY: 0.72, RX: 0.75, RY: 0.85,
@@ -303,12 +305,14 @@ export default function App() {
     '--b1-from':    c.blob1.from,
     '--b1-to':      c.blob1.to,
     '--b1-angle':  `${c.blob1.angle}deg`,
-    '--b1-blur':   `${c.blob1.blur}px`,
-    '--b2-r':      `${c.blob2.radius}vw`,
+    '--b1-blur':    `${c.blob1.blur}px`,
+    '--b1-opacity':  c.blob1.opacity,
+    '--b2-r':       `${c.blob2.radius}vw`,
     '--b2-x':      `${c.blob2.x}%`,
     '--b2-y':      `${c.blob2.y}%`,
-    '--b2-color':   c.blob2.color,
-    '--b2-blur':   `${c.blob2.blur}px`,
+    '--b2-color':    c.blob2.color,
+    '--b2-blur':    `${c.blob2.blur}px`,
+    '--b2-opacity':  c.blob2.opacity,
   }
 
   return (
@@ -380,17 +384,19 @@ export default function App() {
             <Slider   label="Radius"  value={c.blob1.radius} min={40}  max={200} step={5}   unit="vw"  onChange={v => set1('radius', v)} />
             <Slider   label="X"       value={c.blob1.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set1('x', v)} />
             <Slider   label="Y"       value={c.blob1.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set1('y', v)} />
-            <Slider   label="Blur"    value={c.blob1.blur}   min={0}   max={300} step={5}   unit="px"  onChange={v => set1('blur', v)} />
-            <Slider   label="Angle"   value={c.blob1.angle}  min={0}   max={360} step={1}   unit="°"   onChange={v => set1('angle', v)} />
-            <ColorRow label="From"    value={c.blob1.from}   onChange={v => set1('from', v)} />
-            <ColorRow label="To"      value={c.blob1.to}     onChange={v => set1('to', v)} />
+            <Slider   label="Blur"    value={c.blob1.blur}    min={0}   max={300} step={5}    unit="px"  onChange={v => set1('blur', v)} />
+            <Slider   label="Opacity" value={c.blob1.opacity} min={0}   max={1.0} step={0.05} unit=""    onChange={v => set1('opacity', v)} />
+            <Slider   label="Angle"   value={c.blob1.angle}   min={0}   max={360} step={1}    unit="°"   onChange={v => set1('angle', v)} />
+            <ColorRow label="From"    value={c.blob1.from}    onChange={v => set1('from', v)} />
+            <ColorRow label="To"      value={c.blob1.to}      onChange={v => set1('to', v)} />
 
             <div className="ctrl-section-label">Blob 2 — Teal</div>
             <Slider   label="Radius"  value={c.blob2.radius} min={20}  max={200} step={5}   unit="vw"  onChange={v => set2('radius', v)} />
             <Slider   label="X"       value={c.blob2.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set2('x', v)} />
             <Slider   label="Y"       value={c.blob2.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set2('y', v)} />
-            <Slider   label="Blur"    value={c.blob2.blur}   min={0}   max={300} step={5}   unit="px"  onChange={v => set2('blur', v)} />
-            <ColorRow label="Color"   value={c.blob2.color}  onChange={v => set2('color', v)} />
+            <Slider   label="Blur"    value={c.blob2.blur}    min={0}   max={300} step={5}    unit="px"  onChange={v => set2('blur', v)} />
+            <Slider   label="Opacity" value={c.blob2.opacity} min={0}   max={1.0} step={0.05} unit=""    onChange={v => set2('opacity', v)} />
+            <ColorRow label="Color"   value={c.blob2.color}   onChange={v => set2('color', v)} />
 
             <div className="ctrl-section-label">Ellipse</div>
             <Slider label="Dome Y"      value={c.CY}        min={0.55} max={0.95} step={0.01} unit=""   onChange={v => set('CY', v)} />

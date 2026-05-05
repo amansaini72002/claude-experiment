@@ -17,6 +17,7 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  pointer-events: none;
 }
 
 /* ─── Big background blobs (behind BlobCanvas ellipse) ───────────────────── */
@@ -71,6 +72,7 @@
   width: 100%;
   height: 100%;
   z-index: 2;
+  pointer-events: none;
 }
 
 
@@ -313,7 +315,7 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 100;
+  z-index: 9999;
   width: 300px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);

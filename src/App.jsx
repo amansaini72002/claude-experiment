@@ -234,16 +234,16 @@ const DEFAULTS = {
   // Big background blobs (CSS animated circles, behind BlobCanvas ellipse)
   blob1: {                    // white→light-blue gradient (node 1029:14103)
     radius:  110,             // vw
-    x:        50, y: 112,     // % — center below viewport → only arch visible
+    x:        50, y: 140,     // % — pushed well below viewport, only top arch shows
     from:   '#ffffff',
     to:     '#bae6fd',
     angle:   160,
-    blur:     60,             // px — lower default so radius changes are visible
+    blur:     60,
     opacity: 0.9,
   },
   blob2: {                    // teal solid blob (node 1029:14102)
     radius:   90,
-    x:        54, y: 108,     // slightly offset so teal peeks around white
+    x:        54, y: 128,     // % — below blob1 center, teal glows around the arch edge
     color:  '#00bcd4',
     blur:     80,
     opacity: 0.75,
@@ -383,7 +383,7 @@ export default function App() {
             <div className="ctrl-section-label">Blob 1 — White Gradient</div>
             <Slider   label="Radius"  value={c.blob1.radius} min={40}  max={200} step={5}   unit="vw"  onChange={v => set1('radius', v)} />
             <Slider   label="X"       value={c.blob1.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set1('x', v)} />
-            <Slider   label="Y"       value={c.blob1.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set1('y', v)} />
+            <Slider   label="Y"       value={c.blob1.y}      min={50}  max={400} step={1}   unit="%"   onChange={v => set1('y', v)} />
             <Slider   label="Blur"    value={c.blob1.blur}    min={0}   max={300} step={5}    unit="px"  onChange={v => set1('blur', v)} />
             <Slider   label="Opacity" value={c.blob1.opacity} min={0}   max={1.0} step={0.05} unit=""    onChange={v => set1('opacity', v)} />
             <Slider   label="Angle"   value={c.blob1.angle}   min={0}   max={360} step={1}    unit="°"   onChange={v => set1('angle', v)} />
@@ -393,7 +393,7 @@ export default function App() {
             <div className="ctrl-section-label">Blob 2 — Teal</div>
             <Slider   label="Radius"  value={c.blob2.radius} min={20}  max={200} step={5}   unit="vw"  onChange={v => set2('radius', v)} />
             <Slider   label="X"       value={c.blob2.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set2('x', v)} />
-            <Slider   label="Y"       value={c.blob2.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set2('y', v)} />
+            <Slider   label="Y"       value={c.blob2.y}      min={50}  max={400} step={1}   unit="%"   onChange={v => set2('y', v)} />
             <Slider   label="Blur"    value={c.blob2.blur}    min={0}   max={300} step={5}    unit="px"  onChange={v => set2('blur', v)} />
             <Slider   label="Opacity" value={c.blob2.opacity} min={0}   max={1.0} step={0.05} unit=""    onChange={v => set2('opacity', v)} />
             <ColorRow label="Color"   value={c.blob2.color}   onChange={v => set2('color', v)} />

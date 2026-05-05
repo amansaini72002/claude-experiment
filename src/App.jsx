@@ -231,6 +231,21 @@ function GenloopMark() {
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 const DEFAULTS = {
+  // Big background blobs (CSS animated circles, behind BlobCanvas ellipse)
+  blob1: {                    // white→light-blue gradient (node 1029:14103)
+    radius: 110,              // vw — single value keeps it a perfect circle
+    x: 48, y: 110,            // % — center below viewport creates the dome arch
+    from: '#ffffff',
+    to:   '#bae6fd',
+    angle: 160,               // gradient angle in deg
+    blur:  140,               // px
+  },
+  blob2: {                    // teal solid blob (node 1029:14102)
+    radius: 85,
+    x: 55, y: 95,
+    color: '#00bcd4',
+    blur:  130,
+  },
   // Ellipse geometry
   CY: 0.72, RX: 0.75, RY: 0.85,
   outerBlur: 60, coreBlur: 8,
@@ -259,21 +274,48 @@ function Slider({ label, value, min, max, step, unit, onChange }) {
   )
 }
 
+function ColorRow({ label, value, onChange }) {
+  return (
+    <div className="ctrl-row">
+      <span className="ctrl-label">{label}</span>
+      <input type="color" className="ctrl-color" value={value}
+        onChange={e => onChange(e.target.value)} />
+      <span className="ctrl-value" style={{ fontSize: 10 }}>{value}</span>
+    </div>
+  )
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [c, setC] = useState(DEFAULTS)
   const [open, setOpen] = useState(true)
-  const set   = (key, val) => setC(p => ({ ...p, [key]: val }))
+  const set  = (key, val) => setC(p => ({ ...p, [key]: val }))
+  const set1 = (key, val) => setC(p => ({ ...p, blob1: { ...p.blob1, [key]: val } }))
+  const set2 = (key, val) => setC(p => ({ ...p, blob2: { ...p.blob2, [key]: val } }))
   const reset = () => setC(DEFAULTS)
 
   const cssVars = {
     '--noise-opacity': c.noise,
     '--noise-size':    `${c.noiseSize}px`,
+    '--b1-r':      `${c.blob1.radius}vw`,
+    '--b1-x':      `${c.blob1.x}%`,
+    '--b1-y':      `${c.blob1.y}%`,
+    '--b1-from':    c.blob1.from,
+    '--b1-to':      c.blob1.to,
+    '--b1-angle':  `${c.blob1.angle}deg`,
+    '--b1-blur':   `${c.blob1.blur}px`,
+    '--b2-r':      `${c.blob2.radius}vw`,
+    '--b2-x':      `${c.blob2.x}%`,
+    '--b2-y':      `${c.blob2.y}%`,
+    '--b2-color':   c.blob2.color,
+    '--b2-blur':   `${c.blob2.blur}px`,
   }
 
   return (
     <main className="hero" style={cssVars}>
       <ShaderCanvas />
+      <div className="big-blob big-blob-2" />
+      <div className="big-blob big-blob-1" />
       <BlobCanvas c={c} />
       <div className="noise-layer" aria-hidden="true" />
 
@@ -334,6 +376,22 @@ export default function App() {
         {open && (
           <div className="ctrl-body">
 
+            <div className="ctrl-section-label">Blob 1 — White Gradient</div>
+            <Slider   label="Radius"  value={c.blob1.radius} min={40}  max={200} step={5}   unit="vw"  onChange={v => set1('radius', v)} />
+            <Slider   label="X"       value={c.blob1.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set1('x', v)} />
+            <Slider   label="Y"       value={c.blob1.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set1('y', v)} />
+            <Slider   label="Blur"    value={c.blob1.blur}   min={0}   max={300} step={5}   unit="px"  onChange={v => set1('blur', v)} />
+            <Slider   label="Angle"   value={c.blob1.angle}  min={0}   max={360} step={1}   unit="°"   onChange={v => set1('angle', v)} />
+            <ColorRow label="From"    value={c.blob1.from}   onChange={v => set1('from', v)} />
+            <ColorRow label="To"      value={c.blob1.to}     onChange={v => set1('to', v)} />
+
+            <div className="ctrl-section-label">Blob 2 — Teal</div>
+            <Slider   label="Radius"  value={c.blob2.radius} min={20}  max={200} step={5}   unit="vw"  onChange={v => set2('radius', v)} />
+            <Slider   label="X"       value={c.blob2.x}      min={-50} max={150} step={1}   unit="%"   onChange={v => set2('x', v)} />
+            <Slider   label="Y"       value={c.blob2.y}      min={0}   max={200} step={1}   unit="%"   onChange={v => set2('y', v)} />
+            <Slider   label="Blur"    value={c.blob2.blur}   min={0}   max={300} step={5}   unit="px"  onChange={v => set2('blur', v)} />
+            <ColorRow label="Color"   value={c.blob2.color}  onChange={v => set2('color', v)} />
+
             <div className="ctrl-section-label">Ellipse</div>
             <Slider label="Dome Y"      value={c.CY}        min={0.55} max={0.95} step={0.01} unit=""   onChange={v => set('CY', v)} />
             <Slider label="Width rx"    value={c.RX}        min={0.45} max={0.95} step={0.01} unit=""   onChange={v => set('RX', v)} />
@@ -341,7 +399,7 @@ export default function App() {
             <Slider label="Outer blur"  value={c.outerBlur} min={10}   max={100}  step={1}    unit="px" onChange={v => set('outerBlur', v)} />
             <Slider label="Core blur"   value={c.coreBlur}  min={0}    max={30}   step={1}    unit="px" onChange={v => set('coreBlur', v)} />
 
-            <div className="ctrl-section-label">Blobs</div>
+            <div className="ctrl-section-label">Boundary Blobs</div>
             <Slider label="Count"    value={c.blobCount}   min={4}      max={30}    step={1}      unit=""  onChange={v => set('blobCount', v)} />
             <Slider label="Size"     value={c.blobSize}    min={0.02}   max={0.16}  step={0.005}  unit=""  onChange={v => set('blobSize', v)} />
             <Slider label="Blur ×"   value={c.blobBlur}    min={0.2}    max={0.8}   step={0.01}   unit=""  onChange={v => set('blobBlur', v)} />
